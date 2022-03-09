@@ -1,4 +1,5 @@
 #!/bin/bash
+export PGPASSWORD=postgres1
 BASEDIR=$(dirname $0)
 DATABASE=tenmo
 psql -U postgres -f "$BASEDIR/dropdb.sql" &&
