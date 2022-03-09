@@ -9,6 +9,7 @@ public class Account {
     private BigDecimal balance;
 
     //Constructor
+    public Account(){}
     public Account(long accountId, long userId, BigDecimal balance) {
         this.accountId = accountId;
         this.userId = userId;
