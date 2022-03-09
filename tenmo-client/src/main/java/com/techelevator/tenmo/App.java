@@ -2,12 +2,21 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
 
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
+    private final RestTemplate restTemplate = new RestTemplate();
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
@@ -85,8 +94,16 @@ public class App {
     }
 
 	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
-		
+        String url = API_BASE_URL + "account";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(currentUser.getToken());
+        HttpEntity entity = new HttpEntity(headers);
+
+        ResponseEntity<Account> response = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class);
+
+        BigDecimal bal = response.getBody().getBalance();
+        String result = String.format("Your current account balance is: $%.2f",bal);
+        System.out.println(result);
 	}
 
 	private void viewTransferHistory() {
