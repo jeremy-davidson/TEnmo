@@ -97,7 +97,6 @@ public class App {
         String url = API_BASE_URL + "account";
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(currentUser.getToken());
-        headers.set("userId", currentUser.getUser().getId().toString());
         HttpEntity entity = new HttpEntity(headers);
 
         ResponseEntity<Account> response = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class);

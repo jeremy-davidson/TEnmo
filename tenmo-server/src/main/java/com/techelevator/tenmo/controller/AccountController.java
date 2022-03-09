@@ -2,6 +2,8 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.JdbcAccountDao;
+import com.techelevator.tenmo.dao.JdbcUserDao;
+import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,15 +16,21 @@ import java.security.Principal;
 @RestController
 public class AccountController {
 
-    private final AccountDao accountDao = new JdbcAccountDao();
+    private AccountDao accountDao;
+    private UserDao userDao;
 
+    public AccountController(AccountDao accountDao, UserDao userDao) {
+        this.accountDao = accountDao;
+        this.userDao = userDao;
+    }
 
     @GetMapping(value = "/account")
-    public Account get(Authentication auth, @RequestHeader("userId") String userId){
-        System.out.println(userId);
-        BigDecimal bal = new BigDecimal(2.45);
-        Account account = new Account(1,1, bal);
-        return account;
+    public Account get(Authentication auth){
+        int userId = userDao.findIdByUsername(auth.getName());
+        return accountDao.findByUserId(userId);
+//        BigDecimal bal = new BigDecimal(2.45);
+//        Account account = new Account(1,1, bal);
+//        return account;
     }
 
 }
