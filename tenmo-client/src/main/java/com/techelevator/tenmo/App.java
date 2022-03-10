@@ -1,15 +1,9 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.User;
-import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Array;
@@ -161,8 +155,23 @@ public class App {
                 System.out.println(complaint);
             }
         }
+        // Build Transfer Object
+        Transfer transfer = new Transfer();
+        transfer.setTransferType(2);
+        transfer.setTransferStatus(2);
+        transfer.setAccountFrom(currentUser.getUser().getId());
+        transfer.setAccountTo(selectedUser);
+        transfer.setAmount(amount);
+
 
         //post request
+        url = API_BASE_URL + "transfer";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(currentUser.getToken());
+        HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(transfer, headers);
+        Transfer recieveTransfer = restTemplate.postForObject(url, transferHttpEntity, Transfer.class);
+        System.out.println("transfer Id = " + recieveTransfer.getTransferId());
 
         consoleService.pause();
 	}
