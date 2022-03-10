@@ -127,6 +127,7 @@ public class App {
         for(User u:users){
             System.out.printf("%d%11s%n",u.getId(),u.getUsername());
         }
+        System.out.println("---------");
 
         //prompt for user selection
         String promptForID = "\nEnter ID of user you are sending to (0 to cancel): ";
@@ -155,6 +156,7 @@ public class App {
                 System.out.println(complaint);
             }
         }
+
         // Build Transfer Object
         Transfer transfer = new Transfer();
         transfer.setTransferType(2);
@@ -163,7 +165,6 @@ public class App {
         transfer.setAccountTo(selectedUser);
         transfer.setAmount(amount);
 
-
         //post request
         url = API_BASE_URL + "transfer";
         HttpHeaders headers = new HttpHeaders();
@@ -171,9 +172,13 @@ public class App {
         headers.setBearerAuth(currentUser.getToken());
         HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(transfer, headers);
         Boolean result = restTemplate.postForObject(url, transferHttpEntity, Boolean.class);
-        System.out.println("result = " + result);
 
-        consoleService.pause();
+        //print result message
+        if(result){
+            System.out.println("Money Sent!");
+        } else{
+            System.out.println("Something went wrong that we did not account for.");
+        }
 	}
 
 	private void requestBucks() {
