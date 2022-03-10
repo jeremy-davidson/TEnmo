@@ -9,9 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.security.Principal;
-
 @PreAuthorize("isAuthenticated()")
 @RestController
 public class AccountController {
@@ -28,9 +25,6 @@ public class AccountController {
     public Account get(Authentication auth){
         int userId = userDao.findIdByUsername(auth.getName());
         return accountDao.findByUserId(userId);
-//        BigDecimal bal = new BigDecimal(2.45);
-//        Account account = new Account(1,1, bal);
-//        return account;
     }
 
 }

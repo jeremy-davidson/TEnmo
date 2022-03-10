@@ -46,6 +46,13 @@ public class ConsoleService {
         System.out.println();
     }
 
+    public void printSendMenu(){
+        printBreakLine();
+        System.out.println("Users");
+        System.out.printf("ID%14s%n","NAME");
+        printBreakLine();
+    }
+
     public UserCredentials promptForCredentials() {
         String username = promptForString("Username: ");
         String password = promptForString("Password: ");
@@ -88,4 +95,7 @@ public class ConsoleService {
         System.out.println("An error occurred. Check the log for details.");
     }
 
+    public void printBreakLine(){
+        System.out.println("-------------------------------------------");
+    }
 }

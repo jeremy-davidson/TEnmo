@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.services.AuthenticationService;
@@ -11,7 +12,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class App {
 
@@ -95,9 +101,7 @@ public class App {
 
 	private void viewCurrentBalance() {
         String url = API_BASE_URL + "account";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(currentUser.getToken());
-        HttpEntity entity = new HttpEntity(headers);
+        HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
         ResponseEntity<Account> response = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class);
 
@@ -117,13 +121,72 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
+        String url = API_BASE_URL + "user";
+        HttpEntity entity = createEntityWithToken(currentUser.getToken());
+
+        ResponseEntity<User[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, User[].class);
+
+        List<User> users = removeCurrentUserFromList(response.getBody());
+
+        //show list of users
+        consoleService.printSendMenu();
+        for(User u:users){
+            System.out.printf("%d%11s%n",u.getId(),u.getUsername());
+        }
+
+        //prompt for user selection
+        String promptForID = "\nEnter ID of user you are sending to (0 to cancel): ";
+        long selectedUser = currentUser.getUser().getId();
+        while(selectedUser == currentUser.getUser().getId()){
+
+            selectedUser = consoleService.promptForInt(promptForID);
+
+            if(selectedUser == 0){
+                return;
+            } else if(selectedUser == currentUser.getUser().getId()){
+                String complaint = "\nYou can't send money to yourself!\n";
+                System.out.println(complaint);
+            }
+        }
+
+        //prompt for dollar amount
+		String promptForAmount = "Enter amount: ";
+        BigDecimal amount = new BigDecimal(0.00);
+        while(amount.doubleValue() <= 0){
+            amount = consoleService.promptForBigDecimal(promptForAmount);
+            amount = amount.setScale(2, RoundingMode.DOWN);
+
+            if(amount.doubleValue() <= 0){
+                String complaint = "\nYou can't send nothing or a negative amount!\n";
+                System.out.println(complaint);
+            }
+        }
+
+        //post request
+
+        consoleService.pause();
 	}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
 		
 	}
+
+    private HttpEntity createEntityWithToken(String token){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        return new HttpEntity(headers);
+    }
+
+    private List<User> removeCurrentUserFromList(User[] array){
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < array.length; i++){
+            if(!array[i].getId().equals(currentUser.getUser().getId())){
+                users.add(array[i]);
+            }
+        }
+
+        return users;
+    }
 
 }
