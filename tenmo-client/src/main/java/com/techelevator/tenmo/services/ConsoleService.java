@@ -61,14 +61,11 @@ public class ConsoleService {
         System.out.println("---------");
     }
 
-
-
-    public void printTransferArray(Transfer[] transfers, User[] users){
+    public void printTransferArray(String[] strings){
         printBreakLine();
         System.out.println("Transfers");
         System.out.printf("ID%17s%23s%n","From/To", "Amount");
         printBreakLine();
-        String[] strings = formatTransferStrings(transfers, users);
         for(String str:strings){
             System.out.printf(str);
         }
@@ -119,17 +116,6 @@ public class ConsoleService {
 
     public void printBreakLine(){
         System.out.println("-------------------------------------------");
-    }
-
-    private String[] formatTransferStrings(Transfer[] transfers, User[] users) {
-        List<String> strings = new ArrayList<>();
-        String formatString = "%1d%13s%12s%12s%7.2d%n";
-        for (Transfer t: transfers) {
-//            String fromOrTo = t.getAccountTo() ==
-//            String.format(formatString, t.getTransferId());
-
-        }
-        return null;
     }
 
 }

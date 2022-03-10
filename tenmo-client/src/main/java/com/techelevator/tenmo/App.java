@@ -3,6 +3,7 @@ package com.techelevator.tenmo;
 import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TransferService;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -106,12 +107,15 @@ public class App {
     }
 
     private void viewTransferHistory() {
-        String url = API_BASE_URL + "transfer";
+        String url = API_BASE_URL;
         HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
-        Transfer[] transfers = restTemplate.exchange(url, HttpMethod.GET, entity, Transfer[].class).getBody();
+        Transfer[] transfers = restTemplate.exchange(url + "transfer", HttpMethod.GET, entity, Transfer[].class).getBody();
+        User[] users = restTemplate.exchange(url + "user", HttpMethod.GET, entity, User[].class).getBody();
+        Account[] accounts = restTemplate.exchange(url + "account", HttpMethod.GET, entity, Account[].class).getBody();
 
-        consoleService.printTransferArray(null, null);
+        String[] strs = TransferService.formatTransferStrings(transfers, users, accounts, currentUser.getUser());
+        consoleService.printTransferArray(strs);
 
     }
 

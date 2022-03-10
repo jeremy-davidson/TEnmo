@@ -12,6 +12,6 @@ public interface TransferDao {
     Transfer findById(long transferId);
 
     //get all transfers
-    List<Transfer> findByAccountId(long accountId);
+    List<Transfer> findAllByAccountId(long accountId);
 
 }

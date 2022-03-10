@@ -10,6 +10,7 @@ import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,6 @@ import java.math.BigDecimal;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
-
 public class TransferController {
 
     private AccountDao accountDao;
@@ -44,6 +44,13 @@ public class TransferController {
             case 2: return handleSend(auth, transfer);
         }
         return false;
+    }
+
+    @GetMapping(value = "/transfer")
+    public Transfer[] get(Authentication auth){
+        long userId = userDao.findIdByUsername(auth.getName());
+        long accountId = accountDao.findByUserId(userId).getAccountId();
+        return transferDao.findAllByAccountId(accountId).toArray(Transfer[]::new);
     }
 
     private boolean handleSend(Authentication auth, Transfer transfer) {
