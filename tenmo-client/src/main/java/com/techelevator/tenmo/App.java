@@ -35,6 +35,7 @@ public class App {
             mainMenu();
         }
     }
+
     private void loginMenu() {
         int menuSelection = -1;
         while (menuSelection != 0 && currentUser == null) {
@@ -93,28 +94,33 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
+    private void viewCurrentBalance() {
         String url = API_BASE_URL + "account";
         HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
         ResponseEntity<Account> response = restTemplate.exchange(url, HttpMethod.GET, entity, Account.class);
 
         BigDecimal bal = response.getBody().getBalance();
-        String result = String.format("Your current account balance is: $%.2f",bal);
+        String result = String.format("Your current account balance is: $%.2f", bal);
         System.out.println(result);
-	}
+    }
 
-	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
-	}
+    private void viewTransferHistory() {
+        String url = API_BASE_URL + "transfer";
+        HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-		
-	}
+        Transfer[] transfers = restTemplate.exchange(url, HttpMethod.GET, entity, Transfer[].class).getBody();
 
-	private void sendBucks() {
+        consoleService.printTransferArray(null, null);
+
+    }
+
+    private void viewPendingRequests() {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void sendBucks() {
         String url = API_BASE_URL + "user";
         HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
@@ -123,35 +129,32 @@ public class App {
         List<User> users = removeCurrentUserFromList(response.getBody());
 
         //show list of users
-        consoleService.printSendMenu();
-        for(User u:users){
-            System.out.printf("%d%11s%n",u.getId(),u.getUsername());
-        }
-        System.out.println("---------");
+        consoleService.printSendMenu(users.toArray(User[]::new));
+
 
         //prompt for user selection
         String promptForID = "\nEnter ID of user you are sending to (0 to cancel): ";
         long selectedUser = currentUser.getUser().getId();
-        while(selectedUser == currentUser.getUser().getId()){
+        while (selectedUser == currentUser.getUser().getId()) {
 
             selectedUser = consoleService.promptForInt(promptForID);
 
-            if(selectedUser == 0){
+            if (selectedUser == 0) {
                 return;
-            } else if(selectedUser == currentUser.getUser().getId()){
+            } else if (selectedUser == currentUser.getUser().getId()) {
                 String complaint = "\nYou can't send money to yourself!\n";
                 System.out.println(complaint);
             }
         }
 
         //prompt for dollar amount
-		String promptForAmount = "Enter amount: ";
+        String promptForAmount = "Enter amount: ";
         BigDecimal amount = new BigDecimal(0.00);
-        while(amount.doubleValue() <= 0){
+        while (amount.doubleValue() <= 0) {
             amount = consoleService.promptForBigDecimal(promptForAmount);
             amount = amount.setScale(2, RoundingMode.DOWN);
 
-            if(amount.doubleValue() <= 0){
+            if (amount.doubleValue() <= 0) {
                 String complaint = "\nYou can't send nothing or a negative amount!\n";
                 System.out.println(complaint);
             }
@@ -174,29 +177,29 @@ public class App {
         Boolean result = restTemplate.postForObject(url, transferHttpEntity, Boolean.class);
 
         //print result message
-        if(result){
+        if (result) {
             System.out.println("Money Sent!");
-        } else{
+        } else {
             System.out.println("Something went wrong that we did not account for.");
             System.out.println("Please email Mike Levy at: MLevy@SomeDomain.com");
         }
-	}
+    }
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
-		
-	}
+    private void requestBucks() {
+        // TODO Auto-generated method stub
 
-    private HttpEntity createEntityWithToken(String token){
+    }
+
+    private HttpEntity createEntityWithToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         return new HttpEntity(headers);
     }
 
-    private List<User> removeCurrentUserFromList(User[] array){
+    private List<User> removeCurrentUserFromList(User[] array) {
         List<User> users = new ArrayList<>();
-        for (int i = 0; i < array.length; i++){
-            if(!array[i].getId().equals(currentUser.getUser().getId())){
+        for (int i = 0; i < array.length; i++) {
+            if (!array[i].getId().equals(currentUser.getUser().getId())) {
                 users.add(array[i]);
             }
         }

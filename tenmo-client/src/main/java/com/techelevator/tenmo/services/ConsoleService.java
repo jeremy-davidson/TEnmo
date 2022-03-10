@@ -1,9 +1,13 @@
 package com.techelevator.tenmo.services;
 
 
+import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -46,11 +50,29 @@ public class ConsoleService {
         System.out.println();
     }
 
-    public void printSendMenu(){
+    public void printSendMenu(User[] users){
         printBreakLine();
         System.out.println("Users");
         System.out.printf("ID%14s%n","NAME");
         printBreakLine();
+        for(User u:users){
+            System.out.printf("%d%11s%n",u.getId(),u.getUsername());
+        }
+        System.out.println("---------");
+    }
+
+
+
+    public void printTransferArray(Transfer[] transfers, User[] users){
+        printBreakLine();
+        System.out.println("Transfers");
+        System.out.printf("ID%17s%23s%n","From/To", "Amount");
+        printBreakLine();
+        String[] strings = formatTransferStrings(transfers, users);
+        for(String str:strings){
+            System.out.printf(str);
+        }
+        System.out.println("---------");
     }
 
     public UserCredentials promptForCredentials() {
@@ -98,4 +120,16 @@ public class ConsoleService {
     public void printBreakLine(){
         System.out.println("-------------------------------------------");
     }
+
+    private String[] formatTransferStrings(Transfer[] transfers, User[] users) {
+        List<String> strings = new ArrayList<>();
+        String formatString = "%1d%13s%12s%12s%7.2d%n";
+        for (Transfer t: transfers) {
+//            String fromOrTo = t.getAccountTo() ==
+//            String.format(formatString, t.getTransferId());
+
+        }
+        return null;
+    }
+
 }
