@@ -1,6 +1,8 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Account;
+import com.techelevator.tenmo.model.Transfer;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,7 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
-    public Account findByUserId(int userId) {
+    public Account findByUserId(long userId) {
         String sql = "SELECT * FROM account WHERE user_id = ?;";
         Account account = null;
 
@@ -24,6 +26,24 @@ public class JdbcAccountDao implements AccountDao{
             account = mapRowToAccount(sqlRowSet);
         }
         return account;
+    }
+
+    @Override
+    public boolean performTransferOnAccounts(Transfer transfer){
+        String sql = "BEGIN; " +
+                     "UPDATE account SET balance = balance - ? " +
+                     "WHERE account_id = ?; " +
+                     "UPDATE account SET balance = balance + ? " +
+                     "WHERE account_id = ?; " +
+                     "UPDATE transfer SET transfer_status_id = 2 " +
+                     "WHERE transfer_id = ?; " +
+                     "COMMIT;";
+        jdbcTemplate.update(sql, transfer.getAmount(),
+                transfer.getAccountFrom(),
+                transfer.getAmount(),
+                transfer.getAccountTo(),
+                transfer.getTransferId());
+        return true;
     }
 
     private Account mapRowToAccount(SqlRowSet rowSet) {

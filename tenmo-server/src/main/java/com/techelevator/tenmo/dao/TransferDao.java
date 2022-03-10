@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TransferDao {
     //create
-    boolean create(Transfer transfer);
+    Long create(Transfer transfer);
 
     //get transfer
     Transfer findById(long transferId);

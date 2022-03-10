@@ -13,10 +13,15 @@ public class JdbcTransferDao implements TransferDao {
     public JdbcTransferDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
-    public boolean create(Transfer transfer) {
-        String sql = ""
-       return false;
+    public Long create(Transfer transfer) {
+        Long transferID = new Long(-1);
+        String sql = "INSERT INTO transfer(transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                     "VALUES(2, 2, ?, ?, ?) " +
+                     "RETURNING transfer_id;";
+        transferID = jdbcTemplate.queryForObject(sql, Long.class, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        return transferID;
     }
 
     @Override

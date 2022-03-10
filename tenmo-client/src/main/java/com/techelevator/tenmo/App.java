@@ -170,8 +170,8 @@ public class App {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(currentUser.getToken());
         HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(transfer, headers);
-        Transfer recieveTransfer = restTemplate.postForObject(url, transferHttpEntity, Transfer.class);
-        System.out.println("transfer Id = " + recieveTransfer.getTransferId());
+        Boolean result = restTemplate.postForObject(url, transferHttpEntity, Boolean.class);
+        System.out.println("result = " + result);
 
         consoleService.pause();
 	}

@@ -3,6 +3,7 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 
 import com.techelevator.tenmo.model.User;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
@@ -47,13 +49,41 @@ public class TransferController {
     private boolean handleSend(Authentication auth, Transfer transfer) {
         long senderId = userDao.findIdByUsername(auth.getName());
         User recipient = userDao.findById(transfer.getAccountTo());
-        if (senderId != transfer.getAccountFrom() ||
-            senderId == transfer.getAccountTo() ||
-            recipient == null) {
-            return false;
+
+        //Validate Send Transfer is valid.
+        if (senderId != transfer.getAccountFrom()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You must send money from your own account.");
+        }
+        if (senderId == transfer.getAccountTo() ){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "You can not send money to yourself.");
+        }
+        if (recipient == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Recipient not found in system.");
         }
 
-        //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed.");
-        return true;
+        Account senderAccount = accountDao.findByUserId(senderId);
+        int result = senderAccount.getBalance().compareTo(transfer.getAmount());
+        if (result == -1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Insufficient funds to send.");
+        }
+
+        //convert from userIDs to accountIDs
+        transfer.setAccountFrom(accountDao.findByUserId(senderId).getAccountId());
+        transfer.setAccountTo(accountDao.findByUserId(recipient.getId()).getAccountId());
+
+        //create transfer record
+        Long result1 = transferDao.create(transfer);
+        if (result1 == -1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Transfer could not be created in system.");
+        }
+        transfer.setTransferId(result1);
+
+        //perform transfer
+        return accountDao.performTransferOnAccounts(transfer);
     }
 }
