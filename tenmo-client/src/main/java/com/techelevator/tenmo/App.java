@@ -178,6 +178,7 @@ public class App {
             System.out.println("Money Sent!");
         } else{
             System.out.println("Something went wrong that we did not account for.");
+            System.out.println("Please email Mike Levy at: MLevy@SomeDomain.com");
         }
 	}
 
