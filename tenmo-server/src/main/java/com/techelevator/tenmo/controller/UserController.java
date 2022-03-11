@@ -19,6 +19,10 @@ public class UserController {
 
     @GetMapping(value = "/user")
     public User[] getAllUsers() {
+        User[] users = userDao.findAll().toArray(new User[0]);
+        for(User u:users){
+            u.setPassword(""); //Don't send the password hash back to client.
+        }
         return userDao.findAll().toArray(new User[0]);
     }
 }
