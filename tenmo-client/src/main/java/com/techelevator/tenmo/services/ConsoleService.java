@@ -77,8 +77,8 @@ public class ConsoleService {
         System.out.println("Id: " + t.getTransferId());
         System.out.println("From: " + t.getUserNameFrom());
         System.out.println("To: " + t.getUserNameTo());
-        System.out.println("Type: ");//needs type
-        System.out.println("Status: ");//needs status
+        System.out.println("Type: " + TransferService.translateType(t.getTransferType()));
+        System.out.println("Status: " + TransferService.translateStatus(t.getTransferStatus()));
         System.out.println("Amount: $" + t.getAmount());
     }
 

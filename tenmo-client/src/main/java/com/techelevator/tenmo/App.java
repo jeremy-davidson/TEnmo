@@ -124,10 +124,12 @@ public class App {
         //get specific transfer
         url = url + "transfer/" + userInput;
         Transfer transferRequested = restTemplate.exchange(url, HttpMethod.GET, entity, Transfer.class).getBody();
-
-        //Print out transfer requested
-
-
+        if(transferRequested != null){
+            //Print out transfer requested
+            consoleService.printTransferDetails(transferRequested);
+        } else{
+            System.out.println("Transfer not available.");
+        }
 
     }
 

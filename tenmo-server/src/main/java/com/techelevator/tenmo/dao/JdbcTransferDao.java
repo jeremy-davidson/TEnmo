@@ -28,10 +28,33 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public Transfer findById(long transferId) {
-        String sql = "SELECT * FROM transfer WHERE transfer_id = ?;";
-        Transfer transferById = jdbcTemplate.queryForObject(sql, Transfer.class, transferId);
-
-        return transferById;
+        String sql = "SELECT transfer.transfer_id, " +
+                "transfer.transfer_type_id, " +
+                "transfer.transfer_status_id, " +
+                "transfer.account_from, " +
+                "tenmo_user.username AS from_user, " +
+                "transfer.account_to, " +
+                "tenmo_user2.username AS to_user, " +
+                "transfer.amount " +
+                "FROM transfer " +
+                "JOIN account ON account.account_id = transfer.account_from " +
+                "JOIN tenmo_user ON tenmo_user.user_id = account.user_id " +
+                "JOIN account account2 ON account2.account_id = transfer.account_to " +
+                "JOIN tenmo_user tenmo_user2 ON tenmo_user2.user_id = account2.user_id " +
+                "WHERE transfer.transfer_id = ?;";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, transferId);
+        Transfer t = new Transfer();
+        if(rowSet.next()){
+            t.setTransferId(rowSet.getLong("transfer_id"));
+            t.setAccountTo(rowSet.getLong("account_to"));
+            t.setAccountFrom(rowSet.getLong("account_from"));
+            t.setTransferStatus(rowSet.getInt("transfer_status_id"));
+            t.setTransferType(rowSet.getInt("transfer_type_id"));
+            t.setAmount(rowSet.getBigDecimal("amount"));
+            t.setUserNameFrom(rowSet.getString("from_user"));
+            t.setUserNameTo(rowSet.getString("to_user"));
+        }
+        return t;
     }
 
     @Override
