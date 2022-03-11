@@ -54,7 +54,7 @@ public class ConsoleService {
         System.out.printf("ID%14s%n","NAME");
         printBreakLine();
         for(User u:users){
-            System.out.printf("%d%11s%n",u.getId(),u.getUsername());
+            System.out.printf("%-12d%s%n",u.getId(),u.getUsername());
         }
         System.out.println("---------");
     }

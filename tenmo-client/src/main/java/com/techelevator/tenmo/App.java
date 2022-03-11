@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -192,14 +193,18 @@ public class App {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(currentUser.getToken());
         HttpEntity<Transfer> transferHttpEntity = new HttpEntity<>(transfer, headers);
-        Boolean result = restTemplate.postForObject(url, transferHttpEntity, Boolean.class);
+        Boolean result = false;
+        try {
+            result = restTemplate.postForObject(url, transferHttpEntity, Boolean.class);
+        } catch (Exception e){
+
+        }
 
         //print result message
         if (result) {
             System.out.println("Money Sent!");
         } else {
-            System.out.println("Something went wrong that we did not account for.");
-            System.out.println("Please email Mike Levy at: MLevy@SomeDomain.com");
+            System.out.println("Something went wrong! Please make sure your inputs are correct.");
         }
     }
 
