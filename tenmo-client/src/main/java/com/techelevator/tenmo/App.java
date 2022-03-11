@@ -126,7 +126,7 @@ public class App {
         Transfer transferRequested = restTemplate.exchange(url, HttpMethod.GET, entity, Transfer.class).getBody();
 
         //Print out transfer requested
-        
+
     }
 
     private void viewPendingRequests() {
