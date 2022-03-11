@@ -29,7 +29,10 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public Transfer findById(long transferId) {
-        return null;
+        String sql = "SELECT * FROM transfer WHERE transfer_id = ?;";
+        Transfer transferById = jdbcTemplate.queryForObject(sql, Transfer.class, transferId);
+
+        return transferById;
     }
 
     @Override

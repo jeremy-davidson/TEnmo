@@ -11,10 +11,7 @@ import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -59,7 +56,13 @@ public class TransferController {
     }
 
     @GetMapping(value = "/transfer/{id}")
-    public Transfer getTransferById(){
+    public Transfer getTransferById(@PathVariable long id, Authentication auth){
+        Transfer transfer = transferDao.findById(id);
+        long userId = userDao.findIdByUsername(auth.getName());
+        long accountId = accountDao.findByUserId(userId).getAccountId();
+        if (accountId == transfer.getAccountFrom() || accountId == transfer.getAccountTo()) {
+            return transfer;
+        }
         return null;
     }
 

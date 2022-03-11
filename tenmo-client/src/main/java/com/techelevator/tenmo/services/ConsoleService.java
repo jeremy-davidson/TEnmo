@@ -2,6 +2,7 @@ package com.techelevator.tenmo.services;
 
 
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferHistoryItem;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
@@ -70,6 +71,18 @@ public class ConsoleService {
             System.out.printf(str);
         }
         System.out.println("---------");
+    }
+
+    public void printTransferDetails(TransferHistoryItem t) {
+        printBreakLine();
+        System.out.println("Transfer Details");
+        printBreakLine();
+        System.out.println("Id: " + t.getTransferId());
+        System.out.println("From: " + t.getUsernameFrom());
+        System.out.println("To: " + t.getUsernameTo());
+        System.out.println("Type: ");//needs type
+        System.out.println("Status: ");//needs status
+        System.out.println("Amount: $" + t.getAmount());
     }
 
     public UserCredentials promptForCredentials() {

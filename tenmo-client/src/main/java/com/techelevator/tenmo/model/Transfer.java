@@ -8,7 +8,9 @@ public class Transfer {
     private int transferType;
     private int transferStatus;
     private long accountFrom;
+    private String userNameFrom;
     private long accountTo;
+    private String userNameTo;
     private BigDecimal amount;
 
     //Getters and Setters
@@ -58,5 +60,21 @@ public class Transfer {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getUserNameFrom() {
+        return userNameFrom;
+    }
+
+    public void setUserNameFrom(String userNameFrom) {
+        this.userNameFrom = userNameFrom;
+    }
+
+    public String getUserNameTo() {
+        return userNameTo;
+    }
+
+    public void setUserNameTo(String userNameTo) {
+        this.userNameTo = userNameTo;
     }
 }
