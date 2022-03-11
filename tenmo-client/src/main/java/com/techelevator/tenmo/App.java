@@ -110,7 +110,7 @@ public class App {
         String url = API_BASE_URL;
         HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
-        TransferHistoryItem[] historyItems = restTemplate.exchange(url + "transfer", HttpMethod.GET, entity, TransferHistoryItem[].class).getBody();
+        Transfer[] historyItems = restTemplate.exchange(url + "transfer", HttpMethod.GET, entity, Transfer[].class).getBody();
 
         String[] strs = TransferService.formatTransferStrings(historyItems, currentUser.getUser());
         consoleService.printTransferArray(strs);

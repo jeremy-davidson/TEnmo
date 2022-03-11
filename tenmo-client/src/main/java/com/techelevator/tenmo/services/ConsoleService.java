@@ -2,13 +2,10 @@ package com.techelevator.tenmo.services;
 
 
 import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.TransferHistoryItem;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -73,13 +70,13 @@ public class ConsoleService {
         System.out.println("---------");
     }
 
-    public void printTransferDetails(TransferHistoryItem t) {
+    public void printTransferDetails(Transfer t) {
         printBreakLine();
         System.out.println("Transfer Details");
         printBreakLine();
         System.out.println("Id: " + t.getTransferId());
-        System.out.println("From: " + t.getUsernameFrom());
-        System.out.println("To: " + t.getUsernameTo());
+        System.out.println("From: " + t.getUserNameFrom());
+        System.out.println("To: " + t.getUserNameTo());
         System.out.println("Type: ");//needs type
         System.out.println("Status: ");//needs status
         System.out.println("Amount: $" + t.getAmount());

@@ -6,7 +6,6 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 
-import com.techelevator.tenmo.model.TransferHistoryItem;
 import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,13 +45,13 @@ public class TransferController {
     }
 
     @GetMapping(value = "/transfer")
-    public TransferHistoryItem[] get(Authentication auth){
+    public Transfer[] get(Authentication auth){
         //TODO: try to combine this line and next line into one SQL query
             //e.g. "getAccountIdByUsername"
         long userId = userDao.findIdByUsername(auth.getName());
         long accountId = accountDao.findByUserId(userId).getAccountId();
-        List<TransferHistoryItem> transfers = transferDao.getHistoryByAccountId(accountId);
-        return transfers.toArray(new TransferHistoryItem[0]);
+        List<Transfer> transfers = transferDao.getHistoryByAccountId(accountId);
+        return transfers.toArray(new Transfer[0]);
     }
 
     @GetMapping(value = "/transfer/{id}")

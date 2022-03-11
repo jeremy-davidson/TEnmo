@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.TransferHistoryItem;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -50,8 +49,8 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public List<TransferHistoryItem> getHistoryByAccountId(long accountId){
-        List<TransferHistoryItem> list = new ArrayList<>();
+    public List<Transfer> getHistoryByAccountId(long accountId){
+        List<Transfer> list = new ArrayList<>();
         String sql = "SELECT transfer.transfer_id, " +
                     "tenmo_user.username AS from_user, " +
                     "tenmo_user2.username AS to_user, " +
@@ -82,11 +81,11 @@ public class JdbcTransferDao implements TransferDao {
         return t;
     }
 
-    private TransferHistoryItem mapRowToTransferHistoryItem(SqlRowSet rowSet){
-        TransferHistoryItem t = new TransferHistoryItem();
+    private Transfer mapRowToTransferHistoryItem(SqlRowSet rowSet){
+        Transfer t = new Transfer();
         t.setTransferId(rowSet.getLong("transfer_id"));
-        t.setUsernameFrom(rowSet.getString("from_user"));
-        t.setUsernameTo(rowSet.getString("to_user"));
+        t.setUserNameFrom(rowSet.getString("from_user"));
+        t.setUserNameTo(rowSet.getString("to_user"));
         t.setAmount(rowSet.getBigDecimal("amount"));
         return t;
     }
