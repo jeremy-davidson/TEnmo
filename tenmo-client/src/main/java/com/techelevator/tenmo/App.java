@@ -150,7 +150,6 @@ public class App {
         //show list of users
         consoleService.printSendMenu(users.toArray(User[]::new));
 
-
         //prompt for user selection
         String promptForID = "\nEnter ID of user you are sending to (0 to cancel): ";
         long selectedUser = currentUser.getUser().getId();
@@ -158,7 +157,7 @@ public class App {
 
             selectedUser = consoleService.promptForInt(promptForID);
 
-            if (selectedUser == 0) {
+            if (selectedUser <= 0) {
                 return;
             } else if (selectedUser == currentUser.getUser().getId()) {
                 String complaint = "\nYou can't send money to yourself!\n";
