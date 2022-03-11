@@ -17,6 +17,13 @@ public class JdbcAccountDao implements AccountDao{
     }
 
     @Override
+    public Account[] findAll() {
+        String sql = "SELECT * " +
+                     "FROM account";
+        return null;
+    }
+
+    @Override
     public Account findByUserId(long userId) {
         String sql = "SELECT * FROM account WHERE user_id = ?;";
         Account account = null;

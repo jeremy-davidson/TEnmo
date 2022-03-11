@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.TransferHistoryItem;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,29 @@ public class JdbcTransferDao implements TransferDao {
         while(rowSet.next()){
             transfers.add(mapRowToTransfer(rowSet));
         }
-        return null;
+        return transfers;
+    }
+
+    @Override
+    public List<TransferHistoryItem> getHistoryByAccountId(long accountId){
+        List<TransferHistoryItem> list = new ArrayList<>();
+        String sql = "SELECT transfer.transfer_id, " +
+                    "tenmo_user.username AS from_user, " +
+                    "tenmo_user2.username AS to_user, " +
+                    "transfer.amount " +
+                    "FROM transfer " +
+                    "JOIN account ON account.account_id = transfer.account_from " +
+                    "JOIN tenmo_user ON tenmo_user.user_id = account.user_id " +
+                    "JOIN account account2 ON account2.account_id = transfer.account_to " +
+                    "JOIN tenmo_user tenmo_user2 ON tenmo_user2.user_id = account2.user_id " +
+                    "WHERE transfer.account_from = ? " +
+                    "OR transfer.account_to = ? " +
+                    "ORDER BY transfer.transfer_id;";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, accountId, accountId);
+        while(rowSet.next()){
+            list.add(mapRowToTransferHistoryItem(rowSet));
+        }
+        return list;
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rowSet){
@@ -52,6 +75,15 @@ public class JdbcTransferDao implements TransferDao {
         t.setAccountFrom(rowSet.getLong("account_from"));
         t.setTransferStatus(rowSet.getInt("transfer_status_id"));
         t.setTransferType(rowSet.getInt("transfer_type_id"));
+        t.setAmount(rowSet.getBigDecimal("amount"));
+        return t;
+    }
+
+    private TransferHistoryItem mapRowToTransferHistoryItem(SqlRowSet rowSet){
+        TransferHistoryItem t = new TransferHistoryItem();
+        t.setTransferId(rowSet.getLong("transfer_id"));
+        t.setUsernameFrom(rowSet.getString("from_user"));
+        t.setUsernameTo(rowSet.getString("to_user"));
         t.setAmount(rowSet.getBigDecimal("amount"));
         return t;
     }

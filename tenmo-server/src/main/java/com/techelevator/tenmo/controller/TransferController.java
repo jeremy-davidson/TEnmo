@@ -6,6 +6,7 @@ import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 
+import com.techelevator.tenmo.model.TransferHistoryItem;
 import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.List;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
@@ -47,10 +49,18 @@ public class TransferController {
     }
 
     @GetMapping(value = "/transfer")
-    public Transfer[] get(Authentication auth){
+    public TransferHistoryItem[] get(Authentication auth){
+        //TODO: try to combine this line and next line into one SQL query
+            //e.g. "getAccountIdByUsername"
         long userId = userDao.findIdByUsername(auth.getName());
         long accountId = accountDao.findByUserId(userId).getAccountId();
-        return transferDao.findAllByAccountId(accountId).toArray(Transfer[]::new);
+        List<TransferHistoryItem> transfers = transferDao.getHistoryByAccountId(accountId);
+        return transfers.toArray(new TransferHistoryItem[0]);
+    }
+
+    @GetMapping(value = "/transfer/{id}")
+    public Transfer getTransferById(){
+        return null;
     }
 
     private boolean handleSend(Authentication auth, Transfer transfer) {

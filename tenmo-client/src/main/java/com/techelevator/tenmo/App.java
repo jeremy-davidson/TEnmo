@@ -110,13 +110,23 @@ public class App {
         String url = API_BASE_URL;
         HttpEntity entity = createEntityWithToken(currentUser.getToken());
 
-        Transfer[] transfers = restTemplate.exchange(url + "transfer", HttpMethod.GET, entity, Transfer[].class).getBody();
-        User[] users = restTemplate.exchange(url + "user", HttpMethod.GET, entity, User[].class).getBody();
-        Account[] accounts = restTemplate.exchange(url + "account", HttpMethod.GET, entity, Account[].class).getBody();
+        TransferHistoryItem[] historyItems = restTemplate.exchange(url + "transfer", HttpMethod.GET, entity, TransferHistoryItem[].class).getBody();
 
-        String[] strs = TransferService.formatTransferStrings(transfers, users, accounts, currentUser.getUser());
+        String[] strs = TransferService.formatTransferStrings(historyItems, currentUser.getUser());
         consoleService.printTransferArray(strs);
 
+        String prompt = "Please enter transfer ID to view details (0 to cancel): ";
+        int userInput = consoleService.promptForInt(prompt);
+        if(userInput <= 0){
+            return;
+        }
+
+        //get specific transfer
+        url = url + "transfer/" + userInput;
+        Transfer transferRequested = restTemplate.exchange(url, HttpMethod.GET, entity, Transfer.class).getBody();
+
+        //Print out transfer requested
+        
     }
 
     private void viewPendingRequests() {
